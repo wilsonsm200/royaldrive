@@ -1,0 +1,12 @@
+# PocketBase
+backend/pb_data
+backend/pocketbase.exe
+
+# Next.js
+frontend/.next
+frontend/node_modules
+frontend/.env.local
+
+# General
+.DS_Store
+*.log
