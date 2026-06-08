@@ -1,4 +1,4 @@
-type Props = {
+﻿type Props = {
   label: string
   value: string | number
   sub?: string
@@ -26,13 +26,13 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   )
 }
 
-export default function StatCard({ label, value, sub, accent = '#2563eb', spark = [] }: Props) {
+export default function StatCard({ label, value, sub, accent = '#6366f1', spark = [] }: Props) {
   return (
     <div style={{
-      background: '#fff',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '20px',
+      background: 'rgba(255,255,255,0.04)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: '14px',
+      padding: '16px 18px',
       position: 'relative',
       overflow: 'hidden',
       display: 'flex',
@@ -40,7 +40,6 @@ export default function StatCard({ label, value, sub, accent = '#2563eb', spark 
       gap: '0px',
     }}>
 
-      {/* Top accent bar */}
       <div style={{
         position: 'absolute',
         top: 0,
@@ -48,27 +47,25 @@ export default function StatCard({ label, value, sub, accent = '#2563eb', spark 
         right: 0,
         height: '3px',
         background: accent,
-        borderRadius: '12px 12px 0 0',
+        borderRadius: '14px 14px 0 0',
       }} />
 
-      {/* Left accent line */}
       <div style={{
         position: 'absolute',
-        top: '20px',
+        top: '16px',
         left: 0,
         width: '3px',
         height: '48px',
         background: accent,
         borderRadius: '0 3px 3px 0',
-        opacity: 0.25,
+        opacity: 0.3,
       }} />
 
-      {/* Value + sparkline row */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: '6px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: '4px' }}>
         <p style={{
-          fontSize: '28px',
+          fontSize: '26px',
           fontWeight: 800,
-          color: '#0f172a',
+          color: '#fff',
           lineHeight: 1,
           letterSpacing: '-0.8px',
         }}>
@@ -81,23 +78,21 @@ export default function StatCard({ label, value, sub, accent = '#2563eb', spark 
         )}
       </div>
 
-      {/* Label */}
       <p style={{
-        fontSize: '12px',
-        fontWeight: 700,
-        color: '#334155',
+        fontSize: '11px',
+        fontWeight: 600,
+        color: 'rgba(255,255,255,0.55)',
         marginTop: '8px',
         textTransform: 'uppercase',
-        letterSpacing: '0.07em',
+        letterSpacing: '0.08em',
       }}>
         {label}
       </p>
 
-      {/* Sub */}
       {sub && (
         <p style={{
-          fontSize: '11px',
-          color: '#94a3b8',
+          fontSize: '10px',
+          color: 'rgba(255,255,255,0.35)',
           marginTop: '3px',
           fontWeight: 500,
         }}>
@@ -105,7 +100,6 @@ export default function StatCard({ label, value, sub, accent = '#2563eb', spark 
         </p>
       )}
 
-      {/* Bottom accent strip */}
       <div style={{
         position: 'absolute',
         bottom: 0,
@@ -113,7 +107,7 @@ export default function StatCard({ label, value, sub, accent = '#2563eb', spark 
         right: 0,
         height: '1px',
         background: accent,
-        opacity: 0.12,
+        opacity: 0.15,
       }} />
 
     </div>

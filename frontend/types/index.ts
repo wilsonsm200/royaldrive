@@ -1,4 +1,4 @@
-export type Customer = {
+﻿export type Customer = {
   id: string
   name: string
   phone: string
@@ -17,6 +17,8 @@ export type Vehicle = {
   plate: string
   status: 'Available' | 'On Trip' | 'In Service' | 'Leased'
   daily_rate: number
+  color?: string
+  seats?: number
   notes: string
   created: string
   updated: string
@@ -85,7 +87,7 @@ export type Payment = {
   reference_id: string
   amount: number
   method: 'Mpesa' | 'Cash' | 'Bank Transfer'
-  status: 'Paid' | 'Partial' | 'Pending' | 'Overdue'
+  status: 'paid' | 'Paid' | 'pending' | 'Pending' | 'partial' | 'Partial' | 'overdue' | 'Overdue'
   payment_date: string
   notes: string
   created: string

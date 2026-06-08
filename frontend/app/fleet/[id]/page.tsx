@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useParams, useRouter } from 'next/navigation'
 import { useVehicle } from '@/hooks/useVehicles'
 import Button from '@/components/Button'
@@ -11,7 +12,8 @@ export default function VehicleDetailPage() {
   const { id } = useParams()
   const router = useRouter()
   const { vehicle, loading, updateVehicle } = useVehicle(id as string)
-  const [editing, setEditing] = useState(false)
+  const searchParams = useSearchParams()
+  const [editing, setEditing] = useState(searchParams.get('edit') === 'true')
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState<any>(null)
 
@@ -22,8 +24,10 @@ export default function VehicleDetailPage() {
       year: String(vehicle!.year),
       plate: vehicle!.plate,
       status: vehicle!.status,
-      daily_rate: String(vehicle!.daily_rate ?? ''),  // FIXED: daily_rate not daily_rates
+      daily_rate: String(vehicle!.daily_rate ?? ''),
       notes: vehicle!.notes ?? '',
+      color: vehicle!.color ?? '',
+      seats: String(vehicle!.seats ?? ''),
     })
     setEditing(true)
   }
@@ -41,8 +45,10 @@ export default function VehicleDetailPage() {
         year: Number(form.year),
         plate: form.plate,
         status: form.status,
-        daily_rate: Number(form.daily_rate),  // FIXED: daily_rate not daily_rates
+        daily_rate: Number(form.daily_rate),
         notes: form.notes || undefined,
+        color: form.color,
+        seats: Number(form.seats),
       })
       setEditing(false)
     } catch (err) {
@@ -74,13 +80,13 @@ export default function VehicleDetailPage() {
 
   const inputStyle = {
     width: '100%', padding: '8px 10px', border: '1px solid #e2e8f0',
-    borderRadius: '8px', fontSize: '14px', outline: 'none',
+    borderRadius: '8px', fontSize: '14px', outline: 'none', color: '#0f172a', background: '#fff',
   }
 
   return (
     <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#0f172a' }}>
+        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#fff' }}>
           {vehicle.make} {vehicle.model}
         </h1>
         <div style={{ display: 'flex', gap: '10px' }}>
@@ -136,8 +142,8 @@ export default function VehicleDetailPage() {
 
           <div>
             <p style={{ fontSize: '11px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Daily Rate</p>
-            {editing ? <input name='daily_rate' type='number' value={form.daily_rate} onChange={handleChange} style={inputStyle} /> :  // FIXED: name='daily_rate'
-              <p style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>{vehicle.daily_rate ? formatKES(vehicle.daily_rate) : '-'}</p>}  // FIXED: vehicle.daily_rate
+            {editing ? <input name='daily_rate' type='number' value={form.daily_rate} onChange={handleChange} style={inputStyle} /> :
+              <p style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>{vehicle.daily_rate ? formatKES(vehicle.daily_rate) : '-'}</p>}
           </div>
 
           <div>
@@ -150,6 +156,18 @@ export default function VehicleDetailPage() {
                 ))}
               </select>
             ) : <PaymentBadge status={vehicle.status} />}
+          </div>
+
+          <div>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Color</p>
+            {editing ? <input name='color' value={form.color} onChange={handleChange} style={inputStyle} placeholder='e.g Silver' /> :
+              <p style={{ fontSize: '14px', color: '#0f172a' }}>{vehicle.color || '-'}</p>}
+          </div>
+
+          <div>
+            <p style={{ fontSize: '11px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>Seats</p>
+            {editing ? <input name='seats' type='number' value={form.seats} onChange={handleChange} style={inputStyle} placeholder='e.g 5' /> :
+              <p style={{ fontSize: '14px', color: '#0f172a' }}>{vehicle.seats ? vehicle.seats + ' seats' : '-'}</p>}
           </div>
 
           <div>

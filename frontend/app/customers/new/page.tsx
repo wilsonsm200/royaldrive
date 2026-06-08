@@ -55,7 +55,7 @@ export default function NewCustomerPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -78,7 +78,7 @@ export default function NewCustomerPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -100,7 +100,7 @@ export default function NewCustomerPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -122,7 +122,7 @@ export default function NewCustomerPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -144,7 +144,7 @@ export default function NewCustomerPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
               fontFamily: 'inherit',
               resize: 'vertical',
             }}

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f1f5f9;
-  --foreground: #0f172a;
+  --background: #0a0c10;
+  --foreground: #ffffff;
   
   --navy-950: #060c1a;
   --navy-900: #0a0f1e;
@@ -73,4 +73,163 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ========== MOBILE RESPONSIVE STYLES ========== */
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+  /* Hide sidebar by default on mobile */
+  .sidebar-desktop {
+    transform: translateX(-100%);
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 260px !important;
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar-desktop.open {
+    transform: translateX(0);
+  }
+  
+  /* Main content adjustments */
+  .main-content {
+    padding: 12px !important;
+  }
+  
+  /* Card grids become single column */
+  .cards-grid,
+  [style*="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Stat cards become 2 columns on mobile */
+  .stats-grid,
+  [style*="grid-template-columns: repeat(4, 1fr)"],
+  [style*="grid-template-columns: repeat(5, 1fr)"],
+  [style*="grid-template-columns: repeat(6, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  /* Hide some columns in tables on mobile */
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  /* Make tables scroll horizontally */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Smaller font sizes on mobile */
+  body, button, input, select, textarea {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 18px !important;
+  }
+  
+  h2 {
+    font-size: 16px !important;
+  }
+  
+  /* Button adjustments */
+  button {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+  
+  /* Card padding adjustments */
+  [style*="border-radius: 12px"],
+  [style*="border-radius: 14px"],
+  [style*="border-radius: 16px"] {
+    padding: 12px !important;
+  }
+  
+  /* Stat card number size */
+  [style*="font-size: 20px"],
+  [style*="font-size: 22px"],
+  [style*="font-size: 24px"] {
+    font-size: 18px !important;
+  }
+  
+  /* Header action buttons wrap */
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 6px !important;
+  }
+}
+
+/* Small phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .stats-grid,
+  [style*="grid-template-columns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .main-content {
+    padding: 8px !important;
+  }
+  
+  /* Stack flex rows */
+  .flex-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+  button, 
+  a, 
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 40px;
+  }
+  
+  /* Better spacing for touch */
+  .card,
+  [style*="border-radius: 12px"],
+  [style*="border-radius: 14px"] {
+    margin-bottom: 8px;
+  }
+}
+
+/* Mobile menu button */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+}
+
+/* Overlay for mobile sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.sidebar-overlay.open {
+  display: block;
 }

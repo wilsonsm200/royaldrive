@@ -51,7 +51,7 @@ export default function DriverDetailPage() {
   return (
     <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#0f172a' }}>
+        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#fff' }}>
           {driver.name}
         </h1>
         <Button variant='secondary' onClick={() => router.push('/drivers')}>

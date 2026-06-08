@@ -24,7 +24,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const isDashboard = pathname === '/dashboard'
 
   return (
-    <div className='flex h-screen overflow-hidden' style={{ background: '#f1f5f9' }}>
+    <div className='flex h-screen overflow-hidden' style={{ background: '#0a0c10' }}>
       <Sidebar />
       <div className='flex flex-col flex-1 overflow-hidden'>
         <Navbar />

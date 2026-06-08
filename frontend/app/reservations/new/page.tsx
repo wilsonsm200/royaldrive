@@ -21,6 +21,7 @@ export default function NewReservationPage() {
     pickup_location: '',
     destination: '',
     date: '',
+    end_date: '',
     time: '',
     vehicle: '',
     driver: '',
@@ -62,7 +63,7 @@ export default function NewReservationPage() {
         service_type: form.service_type as 'Airport Transfer' | 'Chauffeur' | 'Self-Drive' | 'Wedding' | 'Long Distance',
         pickup_location: form.pickup_location,
         destination: form.destination,
-        date: form.date,
+        date: form.end_date ? `${form.date}|${form.end_date}` : form.date,
         time: form.time,
         vehicle: form.vehicle,
         driver: form.driver || undefined,
@@ -109,8 +110,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
-              background: '#fff',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -138,8 +138,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
-              background: '#fff',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -168,7 +167,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -192,7 +191,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -200,7 +199,7 @@ export default function NewReservationPage() {
         </div>
 
         {/* Date and Time - 2 columns */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#334155', marginBottom: '6px' }}>
               Date *
@@ -217,8 +216,23 @@ export default function NewReservationPage() {
                 border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 fontSize: '14px',
-                outline: 'none',
+                outline: 'none', color: '#0f172a', background: '#fff',
               }}
+              onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#334155', marginBottom: '6px' }}>
+              End Date (optional)
+            </label>
+            <input
+              type='date'
+              name='end_date'
+              value={form.end_date}
+              onChange={handleChange}
+              min={form.date}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
               onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
             />
@@ -239,7 +253,7 @@ export default function NewReservationPage() {
                 border: '1px solid #e2e8f0',
                 borderRadius: '8px',
                 fontSize: '14px',
-                outline: 'none',
+                outline: 'none', color: '#0f172a', background: '#fff',
               }}
               onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
               onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -263,8 +277,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
-              background: '#fff',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -291,8 +304,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
-              background: '#fff',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -321,7 +333,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -343,8 +355,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
-              background: '#fff',
+              outline: 'none', color: '#0f172a', background: '#fff',
             }}
             onFocus={(e) => e.currentTarget.style.borderColor = '#2563eb'}
             onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
@@ -371,7 +382,7 @@ export default function NewReservationPage() {
               border: '1px solid #e2e8f0',
               borderRadius: '8px',
               fontSize: '14px',
-              outline: 'none',
+              outline: 'none', color: '#0f172a', background: '#fff',
               fontFamily: 'inherit',
               resize: 'vertical',
             }}

@@ -1,88 +1,189 @@
 'use client'
 import Link from 'next/link'
-import { useLeasingContracts } from '@/hooks/useLeasingContracts'
-import Button from '@/components/Button'
+import { useEffect, useState } from 'react'
+import pb from '@/lib/pocketbase'
+import { formatKES, formatDate } from '@/lib/utils'
 import PaymentBadge from '@/components/PaymentBadge'
-import { formatKES } from '@/lib/utils'
+
+function calcExpected(startDate: string, amount: number, frequency: string): number {
+  const start = new Date(startDate)
+  const now = new Date()
+  if (start > now) return 0
+  let periods = 0
+  if (frequency === 'monthly') {
+    periods = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+    // only count today if we've reached the day-of-month
+    if (now.getDate() > start.getDate()) periods += 1
+    // if today IS the due date, don't add yet (payment due today, not overdue)
+  } else if (frequency === 'weekly') {
+    periods = Math.floor((now.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000))
+  } else {
+    periods = 1
+  }
+  return periods * amount
+}
+
+function getNextDueDate(startDate: string, frequency: string): string {
+  const start = new Date(startDate)
+  const now = new Date()
+  if (frequency === 'monthly') {
+    const next = new Date(now.getFullYear(), now.getMonth(), start.getDate())
+    if (next < now) next.setMonth(next.getMonth() + 1)
+    return next.toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: 'numeric' })
+  }
+  return '-'
+}
 
 export default function LeasingPage() {
-  const { contracts, ownerMap, vehicleMap, loading, error } = useLeasingContracts()
+  const [contracts, setContracts] = useState<any[]>([])
+  const [ownerMap, setOwnerMap] = useState<Record<string, any>>({})
+  const [vehicleMap, setVehicleMap] = useState<Record<string, any>>({})
+  const [payments, setPayments] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (loading) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <p style={{ color: '#64748b' }}>Loading leasing contracts...</p>
-      </div>
-    )
-  }
+  useEffect(() => {
+    async function load() {
+      try {
+        const [cs, owners, vehicles, pays] = await Promise.all([
+          pb.collection('leasing_contracts').getFullList({ sort: '-created' }),
+          pb.collection('leasing_owners').getFullList(),
+          pb.collection('vehicles').getFullList(),
+          pb.collection('payments').getFullList({ filter: "category='Leasing Payout'" }),
+        ])
+        const oMap: Record<string, any> = {}
+        owners.forEach((o: any) => { oMap[o.id] = o })
+        const vMap: Record<string, any> = {}
+        vehicles.forEach((v: any) => { vMap[v.id] = v })
+        setOwnerMap(oMap)
+        setVehicleMap(vMap)
+        setContracts(cs)
+        setPayments(pays)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
 
-  if (error) {
-    return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <p style={{ color: '#dc2626' }}>Error: {error}</p>
-      </div>
-    )
-  }
+  if (loading) return (
+    <div style={{ padding: '40px', textAlign: 'center', background: '#0a0c10' }}>
+      <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading leasing contracts...</p>
+    </div>
+  )
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', fontFamily: 'Inter, sans-serif', background: '#0a0c10', minHeight: '100vh', padding: '20px 24px' }}>
+
+      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#0f172a' }}>Leasing</h1>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Link href='/leasing/payouts'>
-            <Button variant='secondary'>Payouts</Button>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', margin: 0 }}>Leasing</h1>
+          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', margin: '3px 0 0' }}>{contracts.length} active contract{contracts.length !== 1 ? 's' : ''}</p>
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Link href='/leasing/payouts' style={{ textDecoration: 'none' }}>
+            <button style={{ padding: '9px 16px', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '9px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+              Payouts
+            </button>
           </Link>
-          <Link href='/leasing/new'>
-            <Button>+ New Contract</Button>
+          <Link href='/leasing/new' style={{ textDecoration: 'none' }}>
+            <button style={{ padding: '9px 16px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '9px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
+              + New Contract
+            </button>
           </Link>
         </div>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#fafbfc' }}>
-                {['Owner', 'Vehicle', 'Payout', 'Frequency', 'Status', 'Action'].map((h) => (
-                  <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontSize: '12px', fontWeight: 600, color: '#64748b' }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {contracts.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', color: '#94a3b8', padding: '40px', fontSize: '13px' }}>
-                    No leasing contracts yet
-                  </td>
-                </tr>
-              )}
-              {contracts.map((c) => (
-                <tr
-                  key={c.id}
-                  style={{ borderTop: '1px solid #f1f5f9', cursor: 'pointer' }}
-                  onClick={() => window.location.href = `/leasing/${c.id}`}
-                >
-                  <td style={{ padding: '12px 16px', fontWeight: 500, fontSize: '13px' }}>
-                    {ownerMap[c.owner] || '-'}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
-                    {vehicleMap[c.vehicle] || '-'}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>{formatKES(c.payout_amount)}</td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>{c.payout_frequency}</td>
-                  <td style={{ padding: '12px 16px' }}><PaymentBadge status={c.status} /></td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <Link href={`/leasing/${c.id}`} style={{ color: '#2563eb', fontSize: '12px', textDecoration: 'none' }}>
-                      View →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Contract Cards */}
+      {contracts.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>No leasing contracts yet</p>
         </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '16px' }}>
+        {contracts.map(c => {
+          const owner = ownerMap[c.owner]
+          const vehicle = vehicleMap[c.vehicle]
+          const contractPayments = payments
+          const totalPaid = contractPayments.reduce((s: number, p: any) => s + (Number(p.amount) || 0), 0)
+          const expected = calcExpected(c.start_date, c.payout_amount, c.payout_frequency)
+          const balance = expected - totalPaid
+          const nextDue = getNextDueDate(c.start_date, c.payout_frequency)
+
+          return (
+            <div key={c.id} style={{
+              background: '#1a1c24',
+              border: `1.5px solid ${balance > 0 ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`,
+              borderRadius: '16px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              overflow: 'hidden'
+            }}>
+              {/* Color bar */}
+              <div style={{ height: '4px', background: balance > 0 ? '#ef4444' : '#22c55e' }} />
+
+              {/* Card Header */}
+              <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <p style={{ fontSize: '15px', fontWeight: 800, color: '#fff', margin: 0 }}>{owner?.name || '-'}</p>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', margin: '3px 0 0' }}>
+                    {vehicle ? `${vehicle.make} ${vehicle.model} (${vehicle.plate})` : '-'}
+                  </p>
+                </div>
+                <PaymentBadge status={c.status} />
+              </div>
+
+              {/* Summary Stats */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'rgba(255,255,255,0.06)' }}>
+                {[
+                  { label: 'Monthly', value: formatKES(c.payout_amount), color: '#60a5fa' },
+                  { label: 'Paid', value: formatKES(totalPaid), color: '#4ade80' },
+                  { label: 'Balance', value: formatKES(balance), color: balance > 0 ? '#f87171' : '#4ade80' },
+                ].map(s => (
+                  <div key={s.label} style={{ background: '#1a1c24', padding: '12px 14px', textAlign: 'center' }}>
+                    <p style={{ fontSize: '15px', fontWeight: 800, color: s.color, margin: 0 }}>{s.value}</p>
+                    <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: '3px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Details */}
+              <div style={{ padding: '14px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div>
+                  <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Start Date</p>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, margin: '2px 0 0' }}>{formatDate(c.start_date)}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Next Due</p>
+                  <p style={{ fontSize: '12px', color: '#fb923c', fontWeight: 600, margin: '2px 0 0' }}>{nextDue}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Phone</p>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, margin: '2px 0 0' }}>{owner?.phone || '-'}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Frequency</p>
+                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, margin: '2px 0 0' }}>{c.payout_frequency}</p>
+                </div>
+              </div>
+
+              {/* Action */}
+              <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <Link href={`/leasing/${c.id}`} style={{ textDecoration: 'none' }}>
+                  <button style={{
+                    width: '100%', padding: '8px', background: '#2563eb',
+                    color: '#fff', border: 'none', borderRadius: '8px',
+                    fontSize: '12px', fontWeight: 600, cursor: 'pointer'
+                  }}>
+                    View Contract →
+                  </button>
+                </Link>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

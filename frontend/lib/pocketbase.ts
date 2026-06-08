@@ -1,9 +1,4 @@
 import PocketBase from 'pocketbase'
-
-const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL!)
-
-// Disable auto-cancellation to prevent AbortError issues
-// This stops the SDK from cancelling duplicate pending requests
+const pb = new PocketBase('http://192.168.100.3:8090')
 pb.autoCancellation(false)
-
 export default pb

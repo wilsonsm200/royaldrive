@@ -49,7 +49,7 @@ export default function CustomerDetailPage() {
     <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#0f172a' }}>{customer.name}</h1>
+        <h1 style={{ fontSize: '21px', fontWeight: 700, color: '#fff' }}>{customer.name}</h1>
         <Button variant='secondary' onClick={() => router.push('/customers')}>
           Back
         </Button>
@@ -95,7 +95,7 @@ export default function CustomerDetailPage() {
 
       {/* Reservation History */}
       <div>
-        <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>
           Reservation History
         </h2>
         

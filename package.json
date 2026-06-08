@@ -1,0 +1,57 @@
+{
+    "name":  "royaldrive",
+    "version":  "1.0.0",
+    "description":  "RoyalDrive Mobility Management",
+    "main":  "electron/main.js",
+    "scripts":  {
+                    "electron":  "electron .",
+                    "build":  "electron-builder"
+                },
+    "build":  {
+                  "appId":  "com.royaldrive.mobility",
+                  "productName":  "RoyalDrive Mobility",
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "extraResources":  [
+                                         {
+                                             "from":  "backend/pocketbase.exe",
+                                             "to":  "backend/pocketbase.exe"
+                                         },
+                                         {
+                                             "from":  "frontend/.next",
+                                             "to":  "frontend/.next"
+                                         },
+                                         {
+                                             "from":  "frontend/public",
+                                             "to":  "frontend/public"
+                                         },
+                                         {
+                                             "from":  "frontend/package.json",
+                                             "to":  "frontend/package.json"
+                                         },
+                                         {
+                                             "from":  "frontend/node_modules",
+                                             "to":  "frontend/node_modules"
+                                         },
+                                         {
+                                             "to":  "frontend/.env.local",
+                                             "from":  "frontend/.env.local"
+                                         }
+                                     ],
+                  "files":  [
+                                "electron/**/*"
+                            ],
+                  "win":  {
+                              "target":  "nsis"
+                          },
+                  "nsis":  {
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true
+                           }
+              },
+    "devDependencies":  {
+                            "electron":  "^30.0.0",
+                            "electron-builder":  "^24.0.0"
+                        }
+}
